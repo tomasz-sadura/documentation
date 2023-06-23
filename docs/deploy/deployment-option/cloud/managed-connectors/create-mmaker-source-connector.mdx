@@ -75,4 +75,4 @@ time of creation.
 | **RecordTooLargeException: The message is N bytes (...)** | Use `producer.override.max.request.size` property to change max request size. |
 | **RecordTooLargeException: The request included (...)** | The target server is not able to receive message because it is too large in size. Disabled compression can be a root cause. Consider enabling compression: `"Compression type": "snappy",` |
 | **Scheduler for MirrorSourceConnector caught exception in scheduled task: syncing topic ACLs** | MirrorMaker2 requires an authorizer to be configured by the broker side, but it is not. Change the `Sync topic ACLs enabled` MirrorMaker2 property to `false` (default is `true`) to disable ACL syncing. |
-| **TopicAuthorizationException: Topic authorization failed** | Confirm the service account for source cluster contains describe/describe-configs ACLs. |
+| **TopicAuthorizationException: Topic authorization failed** | Confirm the service account for the source cluster contains describe and/or describe-configs ACLs. |
