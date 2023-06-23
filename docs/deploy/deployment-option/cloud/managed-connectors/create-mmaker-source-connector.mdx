@@ -20,8 +20,8 @@ You can also use it to:
 - The external Kafka cluster must be accessible.
 - A service account with full access to the external cluster must be available.
   You can also use a service account with read-only ACLs when the `Offset-Syncs`
-  topic location is set to `target`. You need describe/describe-configs ACLs for
-  the connector to read topic configs on the source cluster and create the topics
+  topic location is set to `target`. You must have describe and/or describe-configs ACLs for
+  the connector to read topic configurations on the source cluster and create the topics
   on the target cluster, unless you create the topics yourself.
 
 ## Limitations
