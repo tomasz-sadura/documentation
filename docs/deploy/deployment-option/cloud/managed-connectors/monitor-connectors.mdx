@@ -1,0 +1,125 @@
+---
+title: Connectors monitoring
+---
+
+<head>
+    <meta name="title" content="Connectors monitoring | Redpanda Docs"/>
+    <meta name="description" content="Monitor Managed Connectors with metrics."/>
+    <link rel="canonical" href="https://docs.redpanda.com/docs/deploy/deployment-option/cloud/managed-connectors/monitor-connectors/" />
+</head>
+
+
+Redpanda exports metrics for Managed Connectors through a Prometheus HTTPS endpoint for you to monitor connectors health.
+You can use Prometheus and Grafana to visualize the metrics and set up alerting.
+
+## Configure Prometheus
+
+[Prometheus](https://prometheus.io/) is a system monitoring and alerting tool. It collects and stores metrics as time-series data identified by a metric name and key/value pairs.
+
+:::note
+You can quickly start by [running the Prometheus and Grafana locally](https://github.com/redpanda-data/observability/tree/main/cloud).
+:::
+
+To configure and use Prometheus to monitor Redpanda metrics:
+
+1. Go to ** Overview > How to connect > Prometheus **. Click on the icon to the right next to the Prometheus YAML to copy its content into your clipboard.
+
+1. Edit the `prometheus.yml` file in the Prometheus root folder to add the Redpanda configuration under `scrape_configs`.
+
+ ```yaml
+ scrape_configs:
+ - job_name: redpandaCloud
+   static_configs:
+     - targets:
+         - ...
+   metrics_path: /api/cloud/prometheus/public_metrics
+   basic_auth:
+     username: prometheus
+     password: ...
+   scheme: https
+```
+
+1. Save the configuration file, and restart Prometheus to apply changes.
+
+1. Observe in Prometheus that metrics from Redpanda endpoints are scraped.
+
+## Import Grafana dashboard
+
+[Grafana](https://grafana.com/oss/grafana/) is a tool to query, visualize, and generate alerts for metrics.
+
+Redpanda provides a [Grafana dashboard for connectors](https://github.com/redpanda-data/observability/blob/main/grafana-dashboards/Connectors.json).
+
+In Grafana, import the connectors dashboard JSON file to create a dashboard.
+
+
+## Connectors metrics
+
+#### Connector tasks
+
+Number of tasks for a specific connector, grouped by status:
+- `running` - tasks that are healthy and running
+- `paused` - tasks that were paused by a user request
+- `failed` - tasks that failed during execution
+
+Expect only `running` and `paused` tasks. Create an alert for failed tasks.
+
+---
+
+#### Sink connector lag
+The number of records still to be processed by a connector, emitted for sink connectors only (last_offset - current_offset).
+
+For newly created connectors the metric is high, until the connector sinks all historical data.
+
+Expect the lag to be not increasing over time.
+
+---
+
+#### MM2 replication latency
+Age of the last record written to target cluster, by MirrorMaker 2 connector. Metric is emitted per partition.
+
+For newly created connectors the metric is high, until the connector process all historical data.
+
+Expect the latency to be not increasing over time.
+
+---
+
+#### Count of the records sent to target (by topic)
+Counter of records sent to cluster by source connectors, per topic.
+
+---
+
+#### Redpanda consumer latency
+Redpanda consumer fetch latency for sink connectors.
+
+---
+
+#### Redpanda producer latency
+Redpanda producer request latency for source connectors.
+
+---
+
+#### Bytes in
+Bytes per second (throughput) of data from Redpanda to Managed Connectors.
+
+---
+
+#### Bytes out
+Bytes per second (throughput) of data from Managed Connectors to Redpanda.
+
+---
+
+#### Record error rate
+- `record errors` - Total number of record errors seen in connector tasks
+- `record failures` - Total number of record failures seen in connector tasks
+- `record skipped` - Total number of record skipped by connector tasks
+
+---
+
+#### Producer record rate
+- `record sent` - Total number of records sent by connector producers
+- `record retry` - Total number of records sent retries by connector producers
+
+---
+
+#### Producer record error rate
+Rate of producer errors when producing records to Redpanda.
