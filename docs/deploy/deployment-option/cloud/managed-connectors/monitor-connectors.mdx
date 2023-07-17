@@ -51,6 +51,9 @@ Redpanda provides a [Grafana dashboard for connectors](https://github.com/redpan
 
 In Grafana, import the connectors dashboard JSON file to create a dashboard.
 
+## Limitations
+Connectors dashboard renders metrics that are exported by Managed Connectors. In some cases, when a connector creates
+no tasks (e.g. empty topic list), the dashboard will not show metrics for this connector.
 
 ## Connectors metrics
 
